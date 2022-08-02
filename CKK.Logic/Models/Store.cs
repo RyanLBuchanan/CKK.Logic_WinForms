@@ -19,19 +19,24 @@ namespace CKK.Logic.Models
 
         public StoreItem AddStoreItem(Product prod, int quant)
         {
+            // Initialize new ID numbers
+            int newId = 101;
+
             // If the item already exists in the List,
             // then you should add the quantity variable of that item and not add new StoreItem.
             if (quant > 0)
             {
                 StoreItem myItem = FindStoreItemById(prod.Id);
 
-                if (myItem != null)
+                if (myItem != null && prod.Id != 0)  // If product's current ID is 0, give product new ID
                 {
                     myItem.Quantity += quant;
                 }
                 else
                 {
                     myItem = new StoreItem(prod, quant);
+                    myItem.Product.Id = newId;  // Give store item with 0 as current ID new id, beginning with 101
+                    newId++; // Increment newId
                     Products.Add(myItem);
                 }
                 return myItem;
@@ -78,6 +83,21 @@ namespace CKK.Logic.Models
                 throw new ArgumentOutOfRangeException("The value entered must be a postive number");
             }
             
+            return null;
+        }
+
+        public StoreItem DeleteStoreItem(int id)
+        {
+            // If the product does not exist, throw ProductDoesNotExistException
+            if (FindStoreItemById(id) == null)
+            {
+                throw new ProductDoesNotExistException();
+            }
+            else
+            {
+                Products.RemoveAt(id);
+            }
+
             return null;
         }
 
